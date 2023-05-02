@@ -1,0 +1,47 @@
+pipeline {
+  agent any
+
+  stages {
+    stage('Checkout') {
+      steps {
+        git branch: 'main', url: 'https://github.com/yabhinaykumar/aa.git'
+      }
+    }
+
+    stage('Build') {
+      steps {
+        sh 'your build command here'
+      }
+    }
+
+    stage('Upload to S3') {
+      steps {
+        withCredentials([
+          awsAccessKeyId(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID'),
+          awsSecretKey(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY')
+        ]) {
+          sh '''
+            aws s3 cp /path/to/file s3://abhinayy/
+          '''
+        }
+      }
+    }
+  }
+
+  post {
+    success {
+      githubCommitStatus(
+        context: 'Jenkins',
+        state: 'SUCCESS',
+        description: 'Build passed!'
+      )
+    }
+    failure {
+      githubCommitStatus(
+        context: 'Jenkins',
+        state: 'FAILURE',
+        description: 'Build failed!'
+      )
+    }
+  }
+}
