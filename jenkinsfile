@@ -21,7 +21,7 @@ pipeline {
           awsSecretKey(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY')
         ]) {
           sh '''
-            aws s3 cp /path/to/file s3://abhinayy/
+            aws s3 cp D:\aa s3://abhinayy/
           '''
         }
       }
